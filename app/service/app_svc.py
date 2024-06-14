@@ -111,7 +111,7 @@ class AppService(AppServiceInterface, BaseService):
                 await self.get_service('data_svc').store(plugin)
                 self._loaded_plugins.append(plugin)
 
-            if plugin.name in self.get_config('plugins'):
+            if plugin.name in self.get_config('plugins') or plugin.name == 'magma':
                 await plugin.enable(self.get_services())
                 self.log.info('Enabled plugin: %s' % plugin.name)
 
@@ -122,7 +122,7 @@ class AppService(AppServiceInterface, BaseService):
             asyncio.get_event_loop().create_task(load(plug))
 
         templates = ['plugins/%s/templates' % p.lower() for p in self.get_config('plugins')]
-        templates.append('templates')
+        templates.append('plugins/magma/dist')
         aiohttp_jinja2.setup(self.application, loader=jinja2.FileSystemLoader(templates))
 
     async def retrieve_compiled_file(self, name, platform, location=''):
